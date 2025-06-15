@@ -10,6 +10,9 @@ class Question(Base):
     subject = Column(String(200), nullable=False)
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user = relationship("User",  backref="question_users")
+    modified_at = Column(DateTime, nullable=True)
 
 
 class Answer(Base):
@@ -23,3 +26,16 @@ class Answer(Base):
     # relationship으로 question 속성을 생성하면 답변 객체에서 연결된 질문의 제목을 answer.question.subject처럼 참조가 가능하다
     # relationship('참조할 모델명', '역참조 설정')
     question = relationship('Question', backref='answers')
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user = relationship("User",  backref="answer_users")
+    modified_at = Column(DateTime, nullable=True)
+
+
+class User(Base):
+    __tablename__ = "user"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(20), nullable=False)
+    email = Column(String(50), unique=True, nullable=False)
+    password = Column(String(100), nullable=False)
+    created_at = Column(DateTime, nullable=False)

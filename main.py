@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import FileResponse
+from starlette.staticfiles import StaticFiles
 
 from domain.question import question_router
 from domain.answer import answer_router
+from domain.user import user_router
 
 app = FastAPI()
 
@@ -19,9 +22,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def root():
-    return {"message": "This page is main page!"}
 
 app.include_router(router=question_router.router)
 app.include_router(router=answer_router.router)
+app.include_router(router=user_router.router)
+app.mount("/assets", StaticFiles(directory="frontend/dist/assets"))
+
+@app.get("/")
+def root():
+    return FileResponse("frontend/dist/index.html")
+    # return {"message": "This page is main page!"}
